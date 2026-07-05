@@ -1,0 +1,7 @@
+import pandas as pd
+import numpy as np
+df = pd.read_csv("F:\ML Internship\ML Week 4 Task\data\credit_card_fraud_10k.csv.csv")
+
+df.isnull().sum()
+df.duplicated().sum()
+df.info()
