@@ -4,16 +4,21 @@ import joblib
 import os
 
 
-model_path = os.path.join('models', 'best_model.pkl') 
+st.set_page_config(page_title="Fraud Detection App", layout="centered")
+
+
+model_path = os.path.join('models', 'best_model.pkl')
 
 if not os.path.exists(model_path):
-    st.error(f"Error: '{model_path}' nahi mili. Check karein ki file 'models' folder mein hai.")
+    st.error(f"Error: Model file '{model_path}' nahi mili. Check karein.")
     st.stop()
 
 model = joblib.load(model_path)
 
 st.title("🚨 Credit Card Fraud Detector")
+st.write("check fraud thorugh dashboard.")
 
+# 2. Input Form
 with st.form("fraud_form"):
     amount = st.number_input("Transaction Amount", min_value=0.0)
     merchant_category = st.selectbox("Merchant Category", ["Grocery", "Electronics", "Clothing", "Food", "Travel"])
@@ -25,7 +30,7 @@ with st.form("fraud_form"):
     submit = st.form_submit_button("Predict")
 
 if submit:
-   
+ 
     input_data = pd.DataFrame({
         'amount': [amount],
         'merchant_category': [merchant_category],
@@ -35,12 +40,20 @@ if submit:
         'cardholder_age': [cardholder_age]
     })
     
-  
+    # Prediction
     try:
         prediction = model.predict(input_data)
+        
         if prediction[0] == 1:
             st.error("⚠️ ALERT: Fraud Detected!")
         else:
             st.success("✅ Transaction is Safe.")
+            
     except Exception as e:
         st.error(f"Prediction Error: {e}")
+
+
+st.divider()
+st.subheader("Model Performance")
+if os.path.exists('screenshots/confusion_matrix.png'):
+    st.image('screenshots/confusion_matrix.png', caption="Confusion Matrix")
